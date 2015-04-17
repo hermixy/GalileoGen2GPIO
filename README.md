@@ -1,4 +1,4 @@
-# Programming with Galileo Gen2 GPIO & VxWorks-7
+# Programming Galileo Gen2 GPIO
 
 ## Intoduction
 
