@@ -1,4 +1,4 @@
-The file gpioutils.c int /* Utilities to manipulate GPIO pins on a Intel Galileo Gen 2 */
+/* Utilities to manipulate GPIO pins on a Intel Galileo Gen 2 */
 
 #include <stdio.h>
 #include <stddef.h>
