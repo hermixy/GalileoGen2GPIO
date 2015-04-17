@@ -1,18 +1,18 @@
 # Programming Galileo Gen2 GPIO
 
-## Intoduction
+## Introduction
 
-This repositiory contains an example for using Helix App Cloud on the Intel Galielo Gen2 board running VxWorks-7 OS to manupulate GPIO pins. It's a quick tutorial that allows you to get up to speed on how to use GPIO on VxWorks-7 based platforms.
+This repository contains an example for using Helix App Cloud on the Intel Galileo Gen2 board running VxWorks-7 OS to manipulate GPIO pins. It's a quick tutorial that allows you to get up to speed on how to use GPIO on VxWorks-7 based platforms.
 
 ## GPIO for VxWorks-7
 
-VxWorks-7 uses the same interface to GPIO as recent versions of Linux based on sysfs, in particular /sys/class/gpio.  There is an excellent overview describing how to use GPIO from a Linux applicaiton at [Kernel.org Documentation](https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  VxWorks-7 implements the same interface; however, the underlying implementation is quite different. This should not concern you.
+VxWorks-7 uses the same interface to GPIO as recent versions of Linux based on sysfs, in particular /sys/class/gpio.  There is an excellent overview describing how to use GPIO from a Linux application at [Kernel.org Documentation](https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  VxWorks-7 implements the same interface; however, the underlying implementation is quite different. This should not concern you.
 
-The steps to read/write a GPIO pin are relateively simple:
+The steps to read/write a GPIO pin are relatively simple:
 
 ### Step 1 - Reserve/Create the Pin
 
-Following the Linux GPIO interface we first have to create the pin. /sys/class/gpio. We do this by writing the string value of the pin number (eg: "30") to /sys/class/gpio/export.
+Following the Linux GPIO interface we first have to create the pin. /sys/class/gpio. We do this by writing the string value of the pin number (e.g.: "30") to /sys/class/gpio/export.
 
 ```C
 int fd;
@@ -45,7 +45,7 @@ close(fd);
 ```
 ### Step 3a - Set the Output value
 
-If the GPIO is set as an output, the write() function will allow setting it to either a logic 0 or logic 1.  The actual voltage will vary based on the design of your hardware; however, that really only matters to the people wiring boards and devices together.  Here's some code to set the pin to a logic 1 follwed by a logic 0 5 seconds later:
+If the GPIO is set as an output, the write() function will allow setting it to either a logic 0 or logic 1.  The actual voltage will vary based on the design of your hardware; however, that really only matters to the people wiring boards and devices together.  Here's some code to set the pin to a logic 1 followed by a logic 0 5 seconds later:
 
 ```C
 int fd;
@@ -62,7 +62,6 @@ write(fd, "0", 1);             // Set GPIO pin low
 
 close(fd);
 ```
-
 ### Step 3b - Read an Input
 
 Alternatively, if the GPIO is configured for input, you can read the current state with the following code:
@@ -80,7 +79,6 @@ read(fd, &buf, 1);              // Read the value of Pin 35
 
 close(fd);
 ```
-
 ### Step 4 - Deallocate the GPIO
 
 Let's not forget to give the GPIO back when we're done using it.  We use the sysfs "unexport" capability to accomplish this.
@@ -103,7 +101,7 @@ OK, now you know everything there is to know about GPIO on VxWorks-7.  Let's put
 
 ## Blinky
 
-The _Blinky_ demo turns the LED attached to IO Pin 13 on and off.   All you need to eun this demo is the basic Galileo Gen2 board.  Most of the pins on the Galileo Gen2 Arduino interface have multiple functions.  Pin 13 is no expection.  So, before we can start blinking the LED we need to get the proper signals routed to the pin.  This table shows the setup:
+The _Blinky_ demo turns the LED attached to IO Pin 13 on and off.   All you need to run this demo is the basic Galileo Gen2 board.  Most of the pins on the Galileo Gen2 Arduino interface have multiple functions.  Pin 13 is no exception.  So, before we can start blinking the LED we need to get the proper signals routed to the pin.  This table shows the setup:
 
 | GPIO PIN | Direction | Value  |
 |:--------:|:---------:|:------:|
@@ -121,7 +119,7 @@ In order to reduce the amount of typing required, the Blinky demo provides a few
 All of these functions return a 0 if they succeed or non-zero if they fail.
 
 
-### Step 1 - Allocate the requred pins
+### Step 1 - Allocate the required pins
 
 According to our table, we need three GPIO pings to blink the LED: 30, 46, and 7.  The first block of code allocates them:
 
@@ -136,10 +134,9 @@ According to our table, we need three GPIO pings to blink the LED: 30, 46, and 7
         err_exit();
         
 ```
-
 ### Step 2 - Set the GPIO pin direction and value
 
-Now that we have the GPIO pins, we need to set pins 30 and 46 to both be outputs and logic 0.  Additionally, we need to set GPIO 7 to an output since it's actually hooke up to the LED:
+Now that we have the GPIO pins, we need to set pins 30 and 46 to both be outputs and logic 0.  Additionally, we need to set GPIO 7 to an output since it's actually hooked up to the LED:
 
 ```C
    if (gpio_set_direction(30, "out"))
@@ -168,7 +165,6 @@ Finally, GPIO 7 is the signal that actually connects to IO13 and the LED on the 
         sleep(1);
         }
 ```
-
 ### Step 4 - Wait a minute I can't see it
 
 Before you panic look carefully for the LED next to the USB host connector (the bug USB connector).  The LED is buried in there. (Wasn't it great when you didn't need a picture to find a LED?)
@@ -180,7 +176,7 @@ Before you panic look carefully for the LED next to the USB host connector (the 
 
 Most of the physical pins on the Galileo Gen2 Board can perform more than one function.  The GPIO device driver is used to "steer" signals through various multiplexers and level-shifters to accomplish this.  Here are some good references:
 
-* [Emutex Labs Getting Started With Intel Galileo Gen 2](http://www.emutexlabs.com/component/content/article?id=203:getting-started-with-intel-galileo-gen-2) This is a great page that describes how to use the board from Arduino or Lunix.  VxWorks-7 follows whatut says about Linux.
+* [Emutex Labs Getting Started With Intel Galileo Gen 2](http://www.emutexlabs.com/component/content/article?id=203:getting-started-with-intel-galileo-gen-2) This is a great page that describes how to use the board from Arduino or Lunix.  VxWorks-7 follows what it says about Linux.
 * [Galileo Gen2 Schematics](http://download.intel.com/support/galileo/sb/galileo_fabh_schem_120514.pdf) for those like "Luke" that "use the source", here it is.   
 
 
