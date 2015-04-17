@@ -2,17 +2,17 @@
 
 ## Introduction
 
-This repository contains an example for using Helix App Cloud on the Intel Galileo Gen2 board running VxWorks-7 OS to manipulate GPIO pins. It's a quick tutorial that allows you to get up to speed on how to use GPIO on VxWorks-7 based platforms.
+This repository contains an example for using Helix App Cloud on the Intel Galileo Gen2 board running VxWorks-7 OS to manipulate GPIO pins. It's a quick tutorial that allows you to quickly get up to speed on how to use GPIO on VxWorks-7 based platforms.
 
 ## GPIO for VxWorks-7
 
-VxWorks-7 uses the same interface to GPIO as recent versions of Linux based on sysfs, in particular /sys/class/gpio.  There is an excellent overview describing how to use GPIO from a Linux application at [Kernel.org Documentation](https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  VxWorks-7 implements the same interface; however, the underlying implementation is quite different. This should not concern you.
+VxWorks-7 uses the same interface to GPIO as recent versions of Linux based on sysfs, in particular /sys/class/gpio.  There is an excellent overview describing how to use GPIO from a Linux application at [Kernel.org Documentation](https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  VxWorks-7 implements the same interface; however, the underlying implementation is quite different. From the perspective of writing C/C++ application programs, they are the same.
 
 The steps to read/write a GPIO pin are relatively simple:
 
 ### Step 1 - Reserve/Create the Pin
 
-Following the Linux GPIO interface we first have to create the pin. /sys/class/gpio. We do this by writing the string value of the pin number (e.g.: "30") to /sys/class/gpio/export.
+Following the Linux GPIO interface we first have to create the pin using /sys/class/gpio. We do this by writing the string value of the pin number (e.g.: "30") to /sys/class/gpio/export.
 
 ```C
 int fd;
@@ -25,9 +25,9 @@ write(fd, buf, strlen(buf));
 
 close(fd);
 ```
-### Step 2 - Set the pin direction
+### Step 2 - Set the Pin Direction
 
-GPIO pins are either inputs or outputs.  When set as an input, a read() operation will return whatever level the pin is at when the read happens.  When set as an output, a write() operation will set the pin to whatever level is desired. (There are also cases where reading a pin set as output just returns whatever was last written; but, let's not get too ahead of ourselves.)  We set the direction via sysfs:
+GPIO pins are either inputs or outputs.  When set as an input, a read() operation will return whatever logic level is presented by external circuitry when the read happens.  When set as an output, a write() operation will set the pin to whatever logic level is desired. (There are also cases where a read() of a pin set as output just returns whatever was last written; but, let's not get too ahead of ourselves.)  We set the direction via sysfs:
 
 ```C
 int fd;
@@ -43,9 +43,9 @@ write(fd, "out", 3);        // Set as an output
 
 close(fd);
 ```
-### Step 3a - Set the Output value
+### Step 3a - Set the Output Value
 
-If the GPIO is set as an output, the write() function will allow setting it to either a logic 0 or logic 1.  The actual voltage will vary based on the design of your hardware; however, that really only matters to the people wiring boards and devices together.  Here's some code to set the pin to a logic 1 followed by a logic 0 5 seconds later:
+If the GPIO is set as an output, the write() function will allow setting it to either a logic 0 or logic 1.  The actual voltage will vary based on the design of your hardware; however, that really only matters to the people wiring boards and devices together.  Here's some code to set the pin to a logic 1 followed by a logic 0, 5 seconds apart:
 
 ```C
 int fd;
@@ -56,7 +56,7 @@ sprintf(buf, "/sys/class/gpio/gpio%d/value", gpio);
 
 fd = open(buf, O_WRONLY);
 
-write(fd, “1”, 1);              // Set GPIO pin high
+write(fd, “1”, 1);             // Set GPIO pin high
 sleep(5);
 write(fd, "0", 1);             // Set GPIO pin low
 
@@ -64,7 +64,7 @@ close(fd);
 ```
 ### Step 3b - Read an Input
 
-Alternatively, if the GPIO is configured for input, you can read the current state with the following code:
+Alternatively, if the GPIO is configured for input, you can read the current logic level at the pin with the following code:
 
 ```C
 int fd;
@@ -109,7 +109,7 @@ The _Blinky_ demo turns the LED attached to IO Pin 13 on and off.   All you need
 |46        | Output    | 0      |
 |07        | Output    | LED    | 
 
-In order to reduce the amount of typing required, the Blinky demo provides a few functions to perform repetitive functions.  These are implemented in gpioutils.c
+In order to reduce the amount of typing required, the _Blinky_ demo provides a few functions to perform repetitive functions.  These are implemented in gpioutils.c:
 
 * __int gpio_alloc(int gpionum)__ - Allocates (exports) the requested GPIO
 * __int gpio_dealloc(int gpionum)__ - Deallocates (unexports) the requested GPIO
@@ -119,7 +119,7 @@ In order to reduce the amount of typing required, the Blinky demo provides a few
 All of these functions return a 0 if they succeed or non-zero if they fail.
 
 
-### Step 1 - Allocate the required pins
+### Step 1 - Allocate the Required Pins
 
 According to our table, we need three GPIO pings to blink the LED: 30, 46, and 7.  The first block of code allocates them:
 
@@ -134,7 +134,7 @@ According to our table, we need three GPIO pings to blink the LED: 30, 46, and 7
         err_exit();
         
 ```
-### Step 2 - Set the GPIO pin direction and value
+### Step 2 - Set the GPIO Pin Direction and Value
 
 Now that we have the GPIO pins, we need to set pins 30 and 46 to both be outputs and logic 0.  Additionally, we need to set GPIO 7 to an output since it's actually hooked up to the LED:
 
@@ -145,9 +145,9 @@ Now that we have the GPIO pins, we need to set pins 30 and 46 to both be outputs
     if (gpio_write_pin(30, "0"))
         err_exit();
 ```
-You will find the same code for GPIO 46 and GPIO 7.
+You will find the same code for GPIO 46 and GPIO 7 in main.c.
 
-### Step 3 - Let's blink
+### Step 3 - Let's Blink
 
 Finally, GPIO 7 is the signal that actually connects to IO13 and the LED on the Galileo board.  By repetively calling gpio_write_pin() with some delay in between we get the blinking LED:
 
@@ -165,9 +165,9 @@ Finally, GPIO 7 is the signal that actually connects to IO13 and the LED on the 
         sleep(1);
         }
 ```
-### Step 4 - Wait a minute I can't see it
+### Step 4 - Wait a minute I can't see it!
 
-Before you panic look carefully for the LED next to the USB host connector (the bug USB connector).  The LED is buried in there. (Wasn't it great when you didn't need a picture to find a LED?)
+Before you panic look carefully for the surface mount LED next to the USB host connector (the big USB connector).  The LED is buried in there. 
 
 ![](images/intel-galileo-gen2-Led.jpg)
 
@@ -176,8 +176,8 @@ Before you panic look carefully for the LED next to the USB host connector (the 
 
 Most of the physical pins on the Galileo Gen2 Board can perform more than one function.  The GPIO device driver is used to "steer" signals through various multiplexers and level-shifters to accomplish this.  Here are some good references:
 
-* [Emutex Labs Getting Started With Intel Galileo Gen 2](http://www.emutexlabs.com/component/content/article?id=203:getting-started-with-intel-galileo-gen-2) This is a great page that describes how to use the board from Arduino or Lunix.  VxWorks-7 follows what it says about Linux.
-* [Galileo Gen2 Schematics](http://download.intel.com/support/galileo/sb/galileo_fabh_schem_120514.pdf) for those like "Luke" that "use the source", here it is.   
+* [Emutex Labs Getting Started With Intel Galileo Gen 2](http://www.emutexlabs.com/component/content/article?id=203:getting-started-with-intel-galileo-gen-2) This is a great page that describes how to use the board from Arduino or Linux.  VxWorks-7 follows what it says about Linux.
+* [Galileo Gen2 Schematics](http://download.intel.com/support/galileo/sb/galileo_fabh_schem_120514.pdf) for those like "Luke" that "use the source".   
 
 
 
