@@ -169,6 +169,13 @@ Finally, GPIO 7 is the signal that actually connects to IO13 and the LED on the 
         }
 ```
 
+### Step 4 - Wait a minute I can't see it
+
+Before you panic look carefully for the LED next to the USB host connector (the bug USB connector).  The LED is buried in there. (Wasn't it great when you didn't need a picture to find a LED?)
+
+![](images/intel-galileo-gen2-Led.jpg)
+
+
 ## Further Reading
 
 Most of the physical pins on the Galileo Gen2 Board can perform more than one function.  The GPIO device driver is used to "steer" signals through various multiplexers and level-shifters to accomplish this.  Here are some good references:
