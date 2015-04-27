@@ -1,0 +1,1 @@
+ The Intel® Galileo Gen 2 board is the first in a family of Arduino-certified development and prototyping boards based on Intel® architecture and specifically designed for makers, students, educators, and DIY electronics enthusiats.
