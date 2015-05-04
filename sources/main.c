@@ -38,7 +38,6 @@ int main(int argc, char *argv[])
      * Create the required GPIO pins and reserve them 
      */
     
-   Set the
     /* 
      * Setup GPIO30. Output and LOW 
      */
